@@ -11,4 +11,34 @@ body {
     align-items: center;
     width: 100vw;
     height: 100vh;
+    background-color: black;
+}
+
+.container {
+    width: 900px;
+    max-width: 70%;
+    background-color: rgb(4, 170, 247);
+    border-radius: 10px;
+
+}
+
+.button-grid {
+    display: grid;
+    grid-template-columns: repeat(2, auto);
+    margin: 10px 0;
+    gap: 15px;
+    border-radius: 10px;
+    padding: 20px 10px;
+}
+
+.start-button-btn, .next-button-btn {
+    font-size: 5rem;
+    padding: 20px 10px;
+    font-weight: bold;  
+}
+
+.begin-next {
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
