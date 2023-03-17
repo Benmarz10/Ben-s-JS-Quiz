@@ -1,7 +1,7 @@
 //define the variables to be able to run all needed functions
 var startBtn = document.getElementById("start-button");
 var qtnContainer = document.getElementById("question-container");
-var nextCard = document.querySelector("#next");
+var nextCard = document.querySelector("#last");
 var answerOne = document.querySelector(".one");
 var answerTwo = document.querySelector(".two");
 var answerThree = document.querySelector(".three");
@@ -13,6 +13,8 @@ var highScores = document.querySelector("#highscores");
 var clearHighscores = document.querySelector(".clear");
 var nameInput = document.querySelector("#name");
 var currentQuestion = document.querySelector("h2");
+var highScoreBtn = document.querySelector("#highscore");
+var submitBtn = document.querySelector("#submit");
 var timer;
 var timerCount = 25;
 var score;
@@ -57,13 +59,46 @@ function displayNextCard() {
   qtnContainer.setAttribute("style", "display:none");
   startBtn.setAttribute("style", "display:none");
   nextCard.setAttribute("style", "display:block");
+  scoreName.setAttribute("stlye", "display:none");
+  highScores.innerHTML = localStorage.getItem("highscores");
+}
+
+function collectScore(event) {
+  event.preventDefault();
+  localStorage.setItem("name", nameInput.value);
+  var name = localStorage.getItem("name");
+  var yourScore = localStorage.getItem("score");
+  var scoreObject = {
+    score: yourScore,
+    name: name,
+  };
+  
+  console.log(scoreObject);
+  //https://www.youtube.com/watch?v=DFhmNLKwwGw for the two lines below//
+  var highScores = JSON.parse(localStorage.getItem("highscores")) || [];
+  highScores.push(scoreObject);
+  localStorage.setItem("highscores", JSON.stringify(highScores));
+  console.log(localStorage.getItem("highscores"));
+  var scoreDisplay = localStorage.getItem("highscores");
+  highScores.innerHTML = scoreDisplay;
+  
+  displayNextCard();
+}
+
+function displayNameInput() {
+  startBtn.setAttribute("style", "display:none");
+  qtnContainer.setAttribute("style", "display:none");
+  //nextCard.setAttribute("style", "display:none");
+  scoreName.setAttribute("style", "display:block");
 }
 
 function startQuestions() {
   startBtn.setAttribute("style", "display:none");
   qtnContainer.setAttribute("style", "display:block");
   if (questionArray.length === 0) {
-    return
+    clearInterval(timer);
+    displayNameInput();
+    return;
   }
 
   var displayQuestions = questionArray.pop();
@@ -75,22 +110,18 @@ function startQuestions() {
   localStorage.setItem("answer", displayQuestions.rightAnswer);
 }
 
-function startQuiz() {
-  startQuestions();
-}
-
 function checkOne() {
   localStorage.setItem("answer1", answerOne.textContent);
   if (localStorage.getItem("answer1") === localStorage.getItem("answer")) {
     answerResults.textContent = "Correct";
-
+    scoreCount = scoreCount + 1;
+    localStorage.setItem("score", scoreCount);
+  } else {
+    answerResults.textContent = "Wrong";
+    timerCount = timerCount - 5;
   }
-  else {
-    answerResults.textContent = "Wrong"
-
-  }
-  localStorage.removeItem('answer1');
-  localStorage.removeItem('answer');
+  localStorage.removeItem("answer1");
+  localStorage.removeItem("answer");
   startQuestions();
 }
 
@@ -98,44 +129,73 @@ function checkTwo() {
   localStorage.setItem("answer2", answerTwo.textContent);
   if (localStorage.getItem("answer2") === localStorage.getItem("answer")) {
     answerResults.textContent = "Correct";
-
+    scoreCount = scoreCount + 1;
+    localStorage.setItem("score", scoreCount);
+  } else {
+    answerResults.textContent = "Wrong";
+    timerCount = timerCount - 5;
   }
-  else {
-    answerResults.textContent = "Wrong"
-
-  }
-  localStorage.removeItem('answer2');
-  localStorage.removeItem('answer');
+  localStorage.removeItem("answer2");
+  localStorage.removeItem("answer");
 }
 
 function checkThree() {
   localStorage.setItem("answer3", answerThree.textContent);
   if (localStorage.getItem("answer3") === localStorage.getItem("answer")) {
     answerResults.textContent = "Correct";
-
+    scoreCount = scoreCount + 1;
+    localStorage.setItem("score", scoreCount);
+  } else {
+    answerResults.textContent = "Wrong";
+    timerCount = timerCount - 5;
   }
-  else {
-    answerResults.textContent = "Wrong"
-
-  }
-  localStorage.removeItem('answer3');
-  localStorage.removeItem('answer');
+  localStorage.removeItem("answer3");
+  localStorage.removeItem("answer");
 }
 
 function checkFour() {
   localStorage.setItem("answer4", answerFour.textContent);
   if (localStorage.getItem("answer4") === localStorage.getItem("answer")) {
     answerResults.textContent = "Correct";
-
+    scoreCount = scoreCount + 1;
+    localStorage.setItem("score", scoreCount);
+  } else {
+    answerResults.textContent = "Wrong";
+    timerCount = timerCount - 5;
   }
-  else {
-    answerResults.textContent = "Wrong"
-
-  }
-  localStorage.removeItem('answer4');
-  localStorage.removeItem('answer');
+  localStorage.removeItem("answer4");
+  localStorage.removeItem("answer");
 }
+
+function startTimer() {
+  timer = setInterval(function () {
+    timerCount--;
+    document.querySelector(".timercount").textContent = timerCount;
+    if (timerCount === 0) {
+      clearInterval(timer);
+      displayNameInput();
+    }
+  }, 1000);
+}
+
+function startQuiz() {
+  startQuestions();
+  startTimer();
+}
+
+function clearScores() {
+  localStorage.removeItem("highscores");
+  displayNextCard();
+}
+
+function playAgain() {
+  location.reload();
+}
+
 startBtn.addEventListener("click", startQuiz);
+clearHighscores.addEventListener("click", clearScores);
+playAgainBtn.addEventListener("click", playAgain);
+submitBtn.addEventListener("click", collectScore);
 answerOne.addEventListener("click", checkOne);
 answerTwo.addEventListener("click", checkTwo);
 answerThree.addEventListener("click", checkThree);
